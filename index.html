@@ -595,9 +595,16 @@ function renderMovimentos() {
           <td>${m.quantidade}</td><td>${fR(m.preco_unitario)}</td>
           <td><strong>${fR(m.total)}</strong></td>
           <td style="color:var(--muted);font-size:12.5px">${m.observacao||'—'}</td>
+          <td><button class="btn btn-danger btn-sm" onclick="excluirMovimento('${m.id}')">🗑️</button></td>
         </tr>`).join('')
-      : `<tr><td colspan="6"><div class="empty">Nenhuma ${tipo==='compra'?'compra':'venda'} registrada.</div></td></tr>`;
+      : `<tr><td colspan="7"><div class="empty">Nenhuma ${tipo==='compra'?'compra':'venda'} registrada.</div></td></tr>`;
   });
+}
+
+async function excluirMovimento(id) {
+  if (!confirm('Excluir este lançamento? O estoque será revertido automaticamente.')) return;
+  const res = await chamar({ action: 'deleteMovimento', id });
+  if (res?.ok) { toast('Lançamento excluído e estoque revertido!', 'success'); carregarTudo(); }
 }
 
 function abrirModalMov(tipo) {
