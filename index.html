@@ -161,10 +161,22 @@ tbody td { padding: 10px 14px; vertical-align: middle; }
   .nav { display: flex; flex-wrap: wrap; }
   .nav-item { padding: 8px 10px; font-size: 12px; border-left: none; border-bottom: 2px solid transparent; }
   .nav-item.active { border-left-color: transparent; border-bottom-color: #b7e4c7; }
-  .main { margin-left: 0; padding: 14px; }
+  .main { margin-left: 0; padding: 12px; }
   .chart-row, .form-grid { grid-template-columns: 1fr; }
   .form-grid .full { grid-column: 1; }
   .app { flex-direction: column; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .metrics { grid-template-columns: 1fr 1fr; }
+  .metric-val { font-size: 18px; }
+  .btn { padding: 7px 12px; font-size: 13px; }
+  .page-header h2 { font-size: 18px; }
+  /* Produtos: esconder colunas extras no mobile */
+  #page-produtos table thead tr th:nth-child(4),
+  #page-produtos table thead tr th:nth-child(5),
+  #page-produtos table thead tr th:nth-child(7),
+  #page-produtos table tbody tr td:nth-child(4),
+  #page-produtos table tbody tr td:nth-child(5),
+  #page-produtos table tbody tr td:nth-child(7) { display: none; }
 }
 </style>
 </head>
