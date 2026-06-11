@@ -464,6 +464,49 @@ function renderProdutos() {
   const busca = (document.getElementById('filtro-busca').value||'').toLowerCase();
   const cat   = document.getElementById('filtro-cat').value;
   const lista = produtos.filter(p => (!busca||p.nome.toLowerCase().includes(busca)) && (!cat||p.categoria===cat));
+  const isMobile = window.innerWidth <= 720;
+
+  if (isMobile) {
+    // Cards para mobile
+    const container = document.getElementById('tb-produtos').closest('.table-wrap');
+    if (!lista.length) { container.innerHTML=`<div class="empty">Nenhum produto encontrado.</div>`; return; }
+    container.innerHTML = lista.map((p,i) => {
+      const ok = (+p.estoque_atual) > (+p.estoque_minimo);
+      const mg = (+p.preco_custo)>0 && (+p.preco_venda)>0 ? (((+p.preco_venda)-(+p.preco_custo))/(+p.preco_custo)*100).toFixed(1)+'%' : '—';
+      return `<div style="padding:14px 16px;border-bottom:1px solid var(--border);background:var(--surface);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+          <div>
+            <strong style="font-size:15px">${p.nome}</strong>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">${p.categoria||'—'}</div>
+          </div>
+          ${ok?'<span class="badge badge-ok">✅ OK</span>':'<span class="badge badge-baixo">⚠️ Baixo</span>'}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+          <div style="background:var(--bg);border-radius:7px;padding:8px;text-align:center;">
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">Estoque</div>
+            <div style="font-size:16px;font-weight:700;color:var(--text)">${p.estoque_atual} <small style="font-size:11px;font-weight:400">${p.unidade||'un'}</small></div>
+          </div>
+          <div style="background:var(--bg);border-radius:7px;padding:8px;text-align:center;">
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">Venda</div>
+            <div style="font-size:14px;font-weight:700;color:var(--verde)">${fR(p.preco_venda)}</div>
+          </div>
+          <div style="background:var(--bg);border-radius:7px;padding:8px;text-align:center;">
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">Margem</div>
+            <div style="font-size:14px;font-weight:700;color:var(--amber)">${mg}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secondary btn-sm" style="flex:1" onclick="editarProduto(${i})">✏️ Editar</button>
+          <button class="btn btn-danger btn-sm" style="flex:1" onclick="excluirProduto('${p.id}')">🗑️ Remover</button>
+        </div>
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  // Tabela para desktop
+  const container = document.getElementById('tb-produtos').closest('.table-wrap');
+  container.innerHTML = `<table><thead><tr><th>Produto</th><th>Categoria</th><th>Estoque</th><th>Mín.</th><th>Custo</th><th>Venda</th><th>Margem</th><th>Status</th><th></th></tr></thead><tbody id="tb-produtos"></tbody></table>`;
   const tb = document.getElementById('tb-produtos');
   if (!lista.length) { tb.innerHTML=`<tr><td colspan="9"><div class="empty">Nenhum produto encontrado.</div></td></tr>`; return; }
   tb.innerHTML = lista.map((p,i) => {
