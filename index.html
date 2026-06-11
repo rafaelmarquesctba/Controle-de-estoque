@@ -349,10 +349,16 @@ async function chamar(payload) {
   if (!API) { toast('Configure a URL da API primeiro.', 'error'); return null; }
   mostrarSaving(true);
   try {
-    const res  = await fetch(API, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'application/json' } });
-    const data = await res.json();
-    if (data.erro) { toast('Erro: ' + data.erro, 'error'); return null; }
-    return data;
+    const action = payload.action;
+    const data   = Object.assign({}, payload);
+    delete data.action;
+    const params = new URLSearchParams({ action });
+    if (Object.keys(data).length) params.append('data', encodeURIComponent(JSON.stringify(data)));
+    const url = API + '?' + params.toString();
+    const res  = await fetch(url, { redirect: 'follow' });
+    const json = await res.json();
+    if (json.erro) { toast('Erro: ' + json.erro, 'error'); return null; }
+    return json;
   } catch(e) { toast('Falha na comunicação com a API.', 'error'); return null; }
   finally { mostrarSaving(false); }
 }
