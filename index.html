@@ -366,8 +366,9 @@ async function chamar(payload) {
     delete data.action;
     const params = new URLSearchParams({ action });
     if (Object.keys(data).length) params.append('data', encodeURIComponent(JSON.stringify(data)));
+    params.append('_t', Date.now()); // cache-buster: evita que o celular reutilize uma resposta antiga em cache
     const url = API + '?' + params.toString();
-    const res  = await fetch(url, { redirect: 'follow' });
+    const res  = await fetch(url, { redirect: 'follow', cache: 'no-store' });
     const json = await res.json();
     if (json.erro) { toast('Erro: ' + json.erro, 'error'); return null; }
     return json;
